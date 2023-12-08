@@ -1,50 +1,14 @@
 "use client";
+import { useContext } from "react";
+import { useAccount } from "wagmi";
+import { SCWContext } from "../context/SCWallet";
 
 // import image2 from "@/public/2092.jpg";
 
 export default function Home() {
-  // const {
-  //   isAuthenticated,
-  //   loginWeb3Auth,
-  //   logoutWeb3Auth,
-  //   ownerAddress,
-  //   safes,
-  //   safeSelected,
-  //   safeBalance,
-  // } = useAccountAbstraction();
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const { sCWAddress } = useContext(SCWContext);
   return (
-    // <>
-    //   {/* <Navbar /> */}
-    //   <div className="flex flex-col items-center gap-4">
-    //     {isAuthenticated ? (
-    //       <div className="flex flex-col items-center">
-    //         <p className="mr-2">{ownerAddress}</p>
-    //         <Button onClick={logoutWeb3Auth}>Disconnect</Button>
-    //         <br />
-    //         <p className="mr-2">SAFES: {safes}</p>
-    //         <br />
-    //         <p className="mr-2">safeSelected: {safeSelected}</p>
-    //         <br />
-    //         {/* <button onClick={() => isContractAddress(safeSelected)}>
-    //       Check Deployment Status
-    //     </button> */}
-    //         <br />
-    //         <p className="mr-2">Safe Balance: {safeBalance}</p>
-    //         <br />
-    //         {/* <button disabled={!hasNativeFunds} onClick={relayTransaction}>
-    //       Send Transaction
-    //     </button> */}
-
-    //         {/* {!hasNativeFunds && (
-    //       <div>Insufficient funds. Send some funds to the Safe Account</div>
-    //     )} */}
-    //       </div>
-    //     ) : (
-    //       <Button onClick={loginWeb3Auth}>Connect Wallet</Button>
-    //     )}
-    //   </div>
-    // </>
-
     <div
       className="flex flex-col items-start px-8 justify-between h-screen"
       style={{
@@ -52,6 +16,17 @@ export default function Home() {
         backgroundSize: "cover",
       }}
     >
+      <div className="p-4">
+        {address ? (
+          <>
+            <div>Logged In!</div>
+            <div>EOA Address: {address}</div>
+            <div>SCW Address: {sCWAddress}</div>
+          </>
+        ) : (
+          <div>Please connect your wallet</div>
+        )}
+      </div>
       <div className="pt-20 absolute bottom-10 left-10 text-white">
         Our platform turns any event into a breeze of laughter and unforgettable
         moments. Mark your dates and get ready to rock like never before! 🎉📅🚀

@@ -25,7 +25,8 @@ export const SCWContext = createContext<{
 }>({});
 
 const rpcUrl =
-  "https://base-goerli.g.alchemy.com/v2/" + process.env.NEXT_PUBLIC_ALCHEMY_ID;
+  // "https://base-goerli.g.alchemy.com/v2/" + process.env.NEXT_PUBLIC_ALCHEMY_ID;
+  "https://base-goerli.g.alchemy.com/v2/XeqbzKzOklvVcN5tsLW5VnSZ5ETutKuc";
 
 export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
   const [sCWAddress, setSCWAddress] = useState("");

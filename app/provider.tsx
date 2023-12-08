@@ -22,7 +22,7 @@ const { chains, publicClient } = configureChains(
 
 const connectors = connectorsForWallets([
   {
-    groupName: "Paymaster Nft Example",
+    groupName: "Using Base Paymaster",
     wallets: [injectedWallet({ chains })],
   },
 ]);

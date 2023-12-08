@@ -3,6 +3,7 @@ import { MainNav } from "@/components/navbar/main-nav";
 import { UserNav } from "@/components/navbar/user-nav";
 import { BellIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Navbar() {
   return (
@@ -17,7 +18,7 @@ export default function Navbar() {
           <MainNav className="mx-6" />
           <div className="ml-auto flex items-center space-x-4">
             <BellIcon className="w-6 h-6 text-yellow-400" />
-            <UserNav />
+            <ConnectButton />
           </div>
         </div>
       </div>
