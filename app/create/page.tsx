@@ -15,6 +15,8 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { set } from "mongoose";
 import { useAccount } from "wagmi";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Create() {
   // State for the form fields
@@ -29,6 +31,7 @@ export default function Create() {
   const [requireApproval, setRequireApproval] = useState(false);
 
   const { address, isConnecting, isDisconnected } = useAccount();
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,10 +70,37 @@ export default function Create() {
         const data = await response.json();
         console.log(data); // Log the response data
         // Optionally, you can redirect to a success page or perform other actions.
+        toast({
+          title: "Get Ready!",
+          description: "Your event has been created!",
+        });
+        setEventName("");
+        setStartDate(new Date());
+        setEndDate(new Date());
+        setEventDescription("");
+        setToggleValue("In-person");
+        setLocation("");
+        setLink("");
+        setCapacity("");
+        setRequireApproval(false);
       } else {
         const errorData = await response.json();
         console.error(errorData); // Log the error data
         // Optionally, you can display an error message to the user.
+
+        toast({
+          title: "Sorry!",
+          description: "An error occured!",
+        });
+        setEventName("");
+        setStartDate(new Date());
+        setEndDate(new Date());
+        setEventDescription("");
+        setToggleValue("In-person");
+        setLocation("");
+        setLink("");
+        setCapacity("");
+        setRequireApproval(false);
       }
     } catch (error) {
       console.error(error);
@@ -79,8 +109,11 @@ export default function Create() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen pt-">
-      <div className="bg-black bg-opacity-50 p-8 rounded-md text-white">
+    // <div className="bg-black flex items-center justify-center h-full pt-24 pb-12">
+    //   <div className="bg-white bg-opacity-20 p-8 rounded-md text-white">
+    //     <h1 className="text-4xl font-bold mb-4">Create Event</h1>
+    <div className="bg-black flex items-center justify-center h-full pt-24 pb-12">
+      <div className="bg-white bg-opacity-20 p-8 rounded-md text-white w-full max-w-2xl">
         <h1 className="text-4xl font-bold mb-4">Create Event</h1>
 
         <form onSubmit={handleSubmit}>
@@ -98,8 +131,10 @@ export default function Create() {
           </div>
 
           {/* Event Start Date */}
-          <div className="mb-4">
-            {/* <Label htmlFor="startdate">Event Start Date</Label> */}
+          <div className="mb-4 flex flex-col">
+            <Label htmlFor="startdate" className="pb-1">
+              Pick Event Start Date
+            </Label>
             <DatePicker
               date={startDate}
               setDate={setStartDate}
@@ -109,8 +144,10 @@ export default function Create() {
           </div>
 
           {/* Event End Date */}
-          <div className="mb-4">
-            {/* <Label htmlFor="enddate">Event End Date</Label> */}
+          <div className="mb-4 flex flex-col">
+            <Label htmlFor="enddate" className="pb-1">
+              Pick Event End Date
+            </Label>
             <DatePicker
               date={endDate}
               setDate={setEndDate}
@@ -214,24 +251,24 @@ export default function Create() {
           </div>
 
           {/* Require Approval (Toggle) */}
-          <div className="mb-4">
+          <div className="mb-4 flex items-center">
             <Label htmlFor="require-approval">Require Approval &nbsp;</Label>
             <Switch
               id="require-approval"
-              onCheckedChange={(e) => setRequireApproval(false)}
+              checked={requireApproval}
+              onCheckedChange={setRequireApproval}
               placeholder="Require Approval"
-              // checked={requireApproval}
-              // onChange={() => setRequireApproval(!requireApproval)}
             />
           </div>
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
             className="bg-blue-500 text-white p-2 rounded-md"
+            onClick={handleSubmit}
           >
             Create Event
-          </button>
+          </Button>
         </form>
       </div>
     </div>
