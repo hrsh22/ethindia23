@@ -12,8 +12,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function DatePicker({ date, setDate, placeholder }) {
-  const handleDateChange = (newDate) => {
+export default function DatePicker({
+  date,
+  setDate,
+  placeholder,
+}: {
+  date: any;
+  setDate: any;
+  placeholder: any;
+}) {
+  const handleDateChange = (newDate: any) => {
     // Update the date using the provided setDate function
     setDate(newDate);
     console.log(newDate);
