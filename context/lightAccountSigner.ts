@@ -40,10 +40,18 @@ export function useLightAccountSigner(): LightSmartAccountSignerResult {
     [walletClientQuery.data]
   );
 
-  const getAddress = useCallback(
-    () => Promise.resolve(walletClientQuery.data!.account.address),
-    [walletClientQuery.data]
-  );
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const getAddress = useCallback(async () => {
+    let i = 0;
+    while (!walletClientQuery.data?.account?.address) {
+      if (i > 5) return Promise.reject("No address found");
+      await sleep(1000);
+      i++;
+    }
+    return Promise.resolve(walletClientQuery.data!.account.address);
+  }, [walletClientQuery.data]);
 
   if (walletClientQuery.isLoading) {
     return {

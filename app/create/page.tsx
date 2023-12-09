@@ -14,6 +14,7 @@ import {
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { set } from "mongoose";
+import { useAccount } from "wagmi";
 
 export default function Create() {
   // State for the form fields
@@ -27,20 +28,54 @@ export default function Create() {
   const [capacity, setCapacity] = useState("");
   const [requireApproval, setRequireApproval] = useState(false);
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const { address, isConnecting, isDisconnected } = useAccount();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Process form data as needed
-    console.log({
-      eventName,
-      startDate,
-      endDate,
-      eventDescription,
-      location,
-      capacity,
-      requireApproval,
-    });
-    // Add further logic for form submission
+
+    try {
+      // Prepare the event data from the form fields
+      const eventData = {
+        name: eventName,
+        description: eventDescription,
+        creator: address,
+        startDate: startDate,
+        endDate: endDate,
+        location: location,
+        link: link,
+        capacity: capacity,
+        requireApproval: requireApproval,
+      };
+      console.log("eventData", eventData);
+
+      // Make the API call to create the event
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/events/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(eventData),
+        }
+      );
+
+      console.log("response", response);
+
+      // Handle the response from the API
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data); // Log the response data
+        // Optionally, you can redirect to a success page or perform other actions.
+      } else {
+        const errorData = await response.json();
+        console.error(errorData); // Log the error data
+        // Optionally, you can display an error message to the user.
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle any other errors that might occur during the API call.
+    }
   };
 
   return (

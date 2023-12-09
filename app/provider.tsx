@@ -15,7 +15,7 @@ import { SCWalletContext } from "@/context/SCWallet";
 const { chains, publicClient } = configureChains(
   [baseGoerli],
   [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID || "" }),
+    alchemyProvider({ apiKey: "XeqbzKzOklvVcN5tsLW5VnSZ5ETutKuc" }),
     publicProvider(),
   ]
 );

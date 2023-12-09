@@ -1,4 +1,3 @@
-"use client";
 import { createContext, useState, useRef, useMemo } from "react";
 import { useAccount, useNetwork, type Chain } from "wagmi";
 import { toHex } from "viem";
@@ -25,11 +24,11 @@ export const SCWContext = createContext<{
 }>({});
 
 const rpcUrl =
-  // "https://base-goerli.g.alchemy.com/v2/" + process.env.NEXT_PUBLIC_ALCHEMY_ID;
-  "https://base-goerli.g.alchemy.com/v2/XeqbzKzOklvVcN5tsLW5VnSZ5ETutKuc";
+  "https://base-goerli.g.alchemy.com/v2/XeqbzKzOklvVcN5tsLW5VnSZ5ETutKuc"; // + import.meta.env.VITE_ALCHEMY_ID;
 
 export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
   const [sCWAddress, setSCWAddress] = useState("");
+  const [ownerAddress, setOwnerAddress] = useState("");
   const sCWSigner = useRef({});
   const sCWClient = useRef({});
   const account = useAccount();
@@ -37,8 +36,29 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
   const ownerResult = useLightAccountSigner();
 
   useMemo(async () => {
-    if (!account || !network?.chain || ownerResult.isLoading) return;
+    try {
+      const newAddr = await ownerResult.owner?.getAddress();
+      console.log(newAddr);
+      if (newAddr !== ownerAddress && newAddr != undefined) {
+        console.log("setting owner address", newAddr);
+        setOwnerAddress(newAddr);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [ownerResult.isLoading]);
+
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  useMemo(async () => {
+    if (!account || !account.address || !network?.chain || !ownerAddress)
+      return;
+    console.log("running init SCW");
     const chain: Chain = network.chain!;
+    await sleep(1000);
+    const owner = await ownerResult.owner;
+    console.log(owner);
     const baseSigner = new AlchemyProvider({
       rpcUrl,
       chain,
@@ -48,7 +68,7 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
     }).connect((provider) => {
       return new LightSmartContractAccount({
         chain,
-        owner: ownerResult.owner!,
+        owner,
         entryPointAddress: getDefaultEntryPointAddress(chain),
         factoryAddress: getDefaultLightAccountFactoryAddress(chain),
         rpcClient: provider,
@@ -156,7 +176,7 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
       rpcUrl,
     });
     sCWClient.current = client;
-  }, [account?.address, network?.chain?.id, ownerResult.isLoading]);
+  }, [account?.address, network?.chain?.id, ownerAddress]);
 
   const state = {
     sCWAddress,

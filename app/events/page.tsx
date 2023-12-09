@@ -15,14 +15,17 @@ import emptyImg from "@/public/empty.jpg";
 import Image from "next/image";
 import eventBackground from "@/public/eventBackground.png";
 import { Rubik } from "next/font/google";
+import Link from "next/link";
 
 const rubik = Rubik({ subsets: ["latin"] });
 
 const Events = async () => {
+  console.log("hey1");
   const events = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/events`).then(
     (res) => res.json()
   );
-  // console.log(events);
+  console.log(events);
+  console.log("hey2");
   const currentDate = new Date();
   const upcomingEvents = events.response.filter(
     (event: { startDate: string | number | Date }) =>
@@ -34,14 +37,7 @@ const Events = async () => {
   );
 
   return (
-    <div
-      className="flex justify-center pt-20 min-h-[100vh]"
-      style={{
-        backgroundImage: `url(${eventBackground.src})`,
-        backgroundSize: "cover",
-        // backgroundPosition: "center",
-      }}
-    >
+    <div className="flex bg-black justify-center pt-20 min-h-[100vh]">
       <Tabs defaultValue="upcoming" className="w-[700px]">
         <TabsList className="grid w-[400px] grid-cols-3 ml-auto mr-auto">
           <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
@@ -115,28 +111,33 @@ const Events = async () => {
                   backgroundColor: "rgba(255, 255, 255, 0.51)",
                 }}
               >
-                <div className="grid grid-cols-8">
-                  <div className="col-span-5 flex flex-col">
-                    <CardHeader>
-                      <div>12-06-2023</div>
-                      <CardTitle>EVENT</CardTitle>
-                      <CardDescription>
-                        Change your password here. After saving, you'll be
-                        logged out.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div>By CREATOR NAME</div>
-                      <div>EVENT LOCATION</div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button>See More Details</Button>
-                    </CardFooter>
-                  </div>
-                  <div className=" col-span-3 flex items-center ">
-                    <Image src={emptyImg} alt="Empty" className="w-[120px]" />
-                  </div>
+                <div className="">
+                  <CardHeader>
+                    <CardTitle className="text-xl text-white">
+                      {event.name}
+                    </CardTitle>
+                    <CardDescription className="text-white">
+                      by {event.creator}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="">
+                    {event.location && (
+                      <div className="text-white">{event.location}</div>
+                    )}
+                    {event.link && (
+                      <div className="text-white">
+                        <Link href={event.link}> Event Link: {event.link}</Link>
+                      </div>
+                    )}
+                  </CardContent>
+                  <CardFooter>
+                    <div className="">12-06-2023</div>
+                    <Button>See More Details</Button>
+                  </CardFooter>
                 </div>
+                {/* <div className=" col-span-3 flex items-center ">
+                    <Image src={emptyImg} alt="Empty" className="w-[120px]" />
+                  </div> */}
               </Card>
             ))
           )}

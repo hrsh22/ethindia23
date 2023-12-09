@@ -77,7 +77,7 @@ export function MainNav({
             paddingRight: "4px",
           }}
         />
-        Create Event
+        Browse
       </Link>
     </nav>
   );
