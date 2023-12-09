@@ -19,7 +19,7 @@ import pushIcon from "@/public/push.svg";
 export default function Notifications() {
   const { data: _signer } = useWalletClient();
   console.log("WAGMI signer", _signer);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<any>([]);
 
   useEffect(() => {
     if (_signer) {
@@ -44,22 +44,22 @@ export default function Notifications() {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <ScrollArea className="h-[400px] w-[350px] rounded-md border p-4">
+        <ScrollArea className="h-[400px] w-[375px] rounded-md border p-4 overflow-x-auto">
           {" "}
           {notifications.length > 0 &&
-            notifications.map((notification) => (
+            notifications.map((notification: any) => (
               <div
                 key={notification.sid}
-                className="flex justify-between items-center rounded-md border border-gray-300 px-2.5 py-2 mb-3 hover-bg-gray-100 active-bg-gray-200 transition-all duration-500"
+                className="flex justify-between items-center rounded-md border w-[350px] border-gray-300 px-2.5 py-2 mb-3 hover-bg-gray-100 active-bg-gray-200 transition-all duration-500"
               >
-                <div className="flex">
+                <div className="flex ">
                   <div className="flex flex-col">
                     <div className="flex flex-col">
-                      <div className="flex flex-col items items-baseline">
-                        <span className="text-gray-800 text-sm font-normal">
+                      <div className="flex flex-col items  items-baseline">
+                        <span className="text-gray-800  text-sm font-normal">
                           <strong>{notification.title || ""}</strong>
                         </span>
-                        <span className="text-gray-800 text-sm font-normal ml-1">
+                        <span className="text-gray-800  text-sm font-normal ml-1">
                           {notification.message || ""}
                         </span>
                       </div>

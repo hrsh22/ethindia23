@@ -34,13 +34,16 @@ export default function Home() {
       if (!isConnecting && !isDisconnected && address) {
         // The wallet is connected, and you have the wallet address
         try {
-          const response = await fetch(`${NEXT_PUBLIC_URL}/user/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ address: address }),
-          });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_URL}/user/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ address: address }),
+            }
+          );
 
           if (response.ok) {
             console.log("Wallet address saved successfully!");

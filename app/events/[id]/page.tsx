@@ -19,19 +19,21 @@ import { SCWContext } from "@/context/SCWallet";
 export default function Page() {
   const router = useRouter();
   const { address, isConnecting, isDisconnected } = useAccount();
-  const [event, setEvent] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isCreator, setIsCreator] = useState(false);
+  const [event, setEvent] = useState<any>(null);
+  const [isLoaded, setIsLoaded] = useState<any>(false);
+  const [isCreator, setIsCreator] = useState<any>(false);
   const params = useParams();
   console.log("params", params);
   const { toast } = useToast();
   const [anonAadhaar] = useAnonAadhaar();
-  const [userStatus, setUserStatus] = useState("logged-out");
-  const [initialPendingAttendees, setInitialPendingAttendees] = useState([]);
-  const [pendingAttendees, setPendingAttendees] = useState([]);
-  const [isMinting, setIsMinting] = useState(false);
-  const [txHash, setTxHash] = useState("");
-  const { sCWSigner, sCWAddress } = useContext(SCWContext);
+  const [userStatus, setUserStatus] = useState<any>("logged-out");
+  const [initialPendingAttendees, setInitialPendingAttendees] = useState<any>(
+    []
+  );
+  const [pendingAttendees, setPendingAttendees] = useState<any>([]);
+  const [isMinting, setIsMinting] = useState<any>(false);
+  const [txHash, setTxHash] = useState<any>("");
+  const { sCWSigner, sCWAddress } = useContext<any>(SCWContext);
   console.log("anonAadhaar", anonAadhaar);
 
   const handleMint = async () => {
@@ -48,6 +50,7 @@ export default function Page() {
         }),
       });
       setTxHash(mintDeployTxnHash);
+      console.log("mintDeployTxnHash", mintDeployTxnHash);
     } catch (e) {
       console.error(e);
     }
@@ -87,7 +90,7 @@ export default function Page() {
         setEvent(data.response[0]);
         setPendingAttendees(
           data.response[0].attendees?.filter(
-            (attendee) => attendee.status === "pending"
+            (attendee: any) => attendee.status === "pending"
           )
         );
         setIsLoaded(true);
@@ -102,12 +105,13 @@ export default function Page() {
     fetchEvent();
   }, [params.id]);
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: any) => {
     //   await fetch(
     //   `${process.env.NEXT_PUBLIC_URL}/api/events/register?eventId=${params.id}`
     // ).then((res) => res.json());
     try {
       // Prepare the event data from the form fields
+      if (!event) return;
       const data = {
         eventId: event._id,
         userAddress: address,
@@ -175,7 +179,7 @@ export default function Page() {
   // );
   // console.log("pendingAttendees", pendingAttendees);
 
-  const handleAccept = async (eventId, address) => {
+  const handleAccept = async (eventId: any, address: any) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/events/status?eventId=${eventId}&address=${address}&newStatus=approved`,
@@ -191,7 +195,7 @@ export default function Page() {
       const data = await response.json();
       console.log(data); // Handle the response data accordingly
       const updatedAttendees = pendingAttendees.filter(
-        (attendee) => attendee.address !== address
+        (attendee: any) => attendee.address !== address
       );
       setPendingAttendees(updatedAttendees);
       const sendNoti = await Notify(
@@ -206,7 +210,7 @@ export default function Page() {
     }
   };
 
-  const handleReject = async (eventId, address) => {
+  const handleReject = async (eventId: any, address: any) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/events/status?eventId=${eventId}&address=${address}&newStatus=not_approved`,
@@ -222,7 +226,7 @@ export default function Page() {
       const data = await response.json();
       console.log(data); // Handle the response data accordingly
       const updatedAttendees = pendingAttendees.filter(
-        (attendee) => attendee.address !== address
+        (attendee: any) => attendee.address !== address
       );
       setPendingAttendees(updatedAttendees);
       const sendNoti = await Notify(
@@ -312,7 +316,7 @@ export default function Page() {
                   Applicants
                 </div>
                 <div className="flex-1">
-                  {pendingAttendees?.map((attendee, index) => (
+                  {pendingAttendees?.map((attendee: any, index: any) => (
                     <Card
                       key={index}
                       className="mt-16 h-full flex "

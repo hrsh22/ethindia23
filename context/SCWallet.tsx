@@ -68,7 +68,7 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
     }).connect((provider) => {
       return new LightSmartContractAccount({
         chain,
-        owner,
+        owner: owner!,
         entryPointAddress: getDefaultEntryPointAddress(chain),
         factoryAddress: getDefaultLightAccountFactoryAddress(chain),
         rpcClient: provider,
@@ -92,8 +92,8 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
         method: "eth_paymasterAndDataForUserOperation",
         params: [
           {
-            ...params1,
-            nonce: toHex(Number(params1.nonce)),
+            params1,
+            nonce: toHex(Number((params1 as { nonce: number }).nonce)),
             sender: smartAccountAddress,
             callGasLimit: "0x0",
             preVerificationGas: "0x0",
@@ -133,14 +133,20 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
         method: "eth_paymasterAndDataForUserOperation",
         params: [
           {
-            ...params1,
-            nonce: toHex(Number(params1.nonce)),
+            params1,
+            nonce: toHex(Number((params1 as any).nonce)),
             sender: smartAccountAddress,
-            callGasLimit: toHex(Number(params1.callGasLimit)),
-            preVerificationGas: toHex(Number(params1.preVerificationGas)),
-            verificationGasLimit: toHex(Number(params1.verificationGasLimit)),
-            maxFeePerGas: toHex(Number(params1.maxFeePerGas)),
-            maxPriorityFeePerGas: toHex(Number(params1.maxPriorityFeePerGas)),
+            callGasLimit: toHex(Number((params1 as any).callGasLimit)),
+            preVerificationGas: toHex(
+              Number((params1 as any).preVerificationGas)
+            ),
+            verificationGasLimit: toHex(
+              Number((params1 as any).verificationGasLimit)
+            ),
+            maxFeePerGas: toHex(Number((params1 as any).maxFeePerGas)),
+            maxPriorityFeePerGas: toHex(
+              Number((params1 as any).maxPriorityFeePerGas)
+            ),
           },
           baseSigner.getEntryPointAddress(),
           toHex(chain.id),
@@ -161,7 +167,11 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
       };
     };
 
-    const signer = withAlchemyGasFeeEstimator(baseSigner, 50n, 50n);
+    const signer = withAlchemyGasFeeEstimator(
+      baseSigner,
+      BigInt(50),
+      BigInt(50)
+    );
 
     // Integrate the dummy paymaster data middleware and paymaster data middleware middleware with the provider
     const smartAccountSigner = signer.withPaymasterMiddleware({
@@ -180,8 +190,8 @@ export const SCWalletContext = ({ children }: React.PropsWithChildren) => {
 
   const state = {
     sCWAddress,
-    sCWSigner: sCWSigner.current,
-    sCWClient: sCWClient.current,
+    sCWSigner: sCWSigner.current as any,
+    sCWClient: sCWClient.current as any,
   };
 
   return <SCWContext.Provider value={state}>{children}</SCWContext.Provider>;

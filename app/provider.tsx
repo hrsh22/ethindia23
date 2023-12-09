@@ -34,14 +34,16 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-const appid = process.env.NEXT_PUBLIC_APP_ID;
+// const appid = process.env.NEXT_PUBLIC_APP_ID;
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
         <SCWalletContext>
-          <AnonAadhaarProvider _appId={appid}>{children}</AnonAadhaarProvider>
+          <AnonAadhaarProvider _appId="127565977210238833001432228742013341112066899968">
+            {children}
+          </AnonAadhaarProvider>
         </SCWalletContext>
       </RainbowKitProvider>
     </WagmiConfig>

@@ -34,7 +34,7 @@ export default function Create() {
   const { address, isConnecting, isDisconnected } = useAccount();
   const { toast } = useToast();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
@@ -146,7 +146,7 @@ export default function Create() {
               date={startDate}
               setDate={setStartDate}
               placeholder="Pick Event Start Date"
-              id="startdate"
+              // id="startdate"
             />
           </div>
 
@@ -159,7 +159,6 @@ export default function Create() {
               date={endDate}
               setDate={setEndDate}
               placeholder="Pick Event End Date"
-              id="enddate"
             />
           </div>
 

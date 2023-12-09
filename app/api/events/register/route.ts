@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     const isUserRegistered = event.attendees.some(
-      (attendee) => attendee.address === userAddress
+      (attendee: any) => attendee.address === userAddress
     );
 
     // Check if the event requires approval

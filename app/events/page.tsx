@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -26,11 +26,11 @@ const rubik = Rubik({ subsets: ["latin"] });
 
 const Events = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
-  const [events, setEvents] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [pastEvents, setPastEvents] = useState([]);
-  const [yourEvents, setYourEvents] = useState([]);
+  const [events, setEvents] = useState<any>([]);
+  const [isLoaded, setIsLoaded] = useState<any>(false);
+  const [upcomingEvents, setUpcomingEvents] = useState<any>([]);
+  const [pastEvents, setPastEvents] = useState<any>([]);
+  const [yourEvents, setYourEvents] = useState<any>([]);
   // console.log("hey1");
   // const events = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/events`, {
   //   cache: "no-store",
@@ -63,20 +63,20 @@ const Events = () => {
         const currentDate = new Date();
 
         const upcomingEvents = data.response?.filter(
-          (event: { startDate: string | number | Date }) =>
+          (event: { attendees: any; startDate: string | number | Date }) =>
             new Date(event.startDate) > currentDate &&
             event.attendees?.some(
-              (attendee) =>
+              (attendee: any) =>
                 attendee.address === address && attendee.status === "approved"
             )
         );
         console.log("upcomingEvents", upcomingEvents);
         setUpcomingEvents(upcomingEvents);
         const pastEvents = data.response?.filter(
-          (event: { startDate: string | number | Date }) =>
+          (event: { attendees: any; startDate: string | number | Date }) =>
             new Date(event.startDate) <= currentDate &&
             event.attendees?.some(
-              (attendee) =>
+              (attendee: any) =>
                 attendee.address === address && attendee.status === "approved"
             )
         );
@@ -102,7 +102,7 @@ const Events = () => {
   // console.log(events);
   // console.log("hey2");
 
-  function formatDate(isoDateString) {
+  function formatDate(isoDateString: any) {
     const isoDate = new Date(isoDateString);
 
     // Get the components of the date
@@ -116,7 +116,7 @@ const Events = () => {
     return formattedDate;
   }
 
-  function padZero(number) {
+  function padZero(number: any) {
     return number < 10 ? "0" + number : number;
   }
 
@@ -159,7 +159,14 @@ const Events = () => {
               </div>
             ) : (
               upcomingEvents.map(
-                (event: { _id: React.Key | null | undefined }) => (
+                (event: {
+                  startDate(startDate: any): React.ReactNode;
+                  link: React.JSX.Element;
+                  location: React.JSX.Element;
+                  creator: ReactNode;
+                  name: ReactNode;
+                  _id: React.Key | null | undefined;
+                }) => (
                   <Card
                     key={event._id}
                     className="border-0 mt-16 h-[200px] flex"
@@ -184,7 +191,7 @@ const Events = () => {
                         )}
                         {event.link && (
                           <div className="text-white">
-                            <Link href={event.link}>
+                            <Link href={event.link as any}>
                               {" "}
                               Event Link: {event.link}
                             </Link>
@@ -244,53 +251,66 @@ const Events = () => {
                 </div>
               </div>
             ) : (
-              pastEvents.map((event: { _id: React.Key | null | undefined }) => (
-                <Card
-                  key={event._id}
-                  className="border-0 mt-16 h-[200px] flex"
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.51)",
-                  }}
-                >
-                  <div className="flex-1">
-                    <CardHeader>
-                      <CardTitle className="text-xl text-red-800">
-                        {event.name}
-                      </CardTitle>
-                      <CardDescription className="text-white">
-                        by {event.creator}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="">
-                      {event.location && (
-                        <div className="text-white">{event.location}</div>
-                      )}
-                      {event.link && (
+              pastEvents.map(
+                (event: {
+                  startDate(startDate: any): React.ReactNode;
+                  link: React.JSX.Element;
+                  location: React.JSX.Element;
+                  creator: ReactNode;
+                  name: ReactNode;
+                  _id: React.Key | null | undefined;
+                }) => (
+                  <Card
+                    key={event._id}
+                    className="border-0 mt-16 h-[200px] flex"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.51)",
+                    }}
+                  >
+                    <div className="flex-1">
+                      <CardHeader>
+                        <CardTitle className="text-xl text-red-800">
+                          {event.name}
+                        </CardTitle>
+                        <CardDescription className="text-white">
+                          by {event.creator}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="">
+                        {event.location && (
+                          <div className="text-white">{event.location}</div>
+                        )}
+                        {event.link && (
+                          <div className="text-white">
+                            <Link href={event.link as any}>
+                              {" "}
+                              Event Link: {event.link}
+                            </Link>
+                          </div>
+                        )}
+                      </CardContent>
+                      <CardFooter>
                         <div className="text-white">
-                          <Link href={event.link}>
-                            {" "}
-                            Event Link: {event.link}
-                          </Link>
+                          {formatDate(event.startDate)}
                         </div>
-                      )}
-                    </CardContent>
-                    <CardFooter>
-                      <div className="text-white">
-                        {formatDate(event.startDate)}
-                      </div>
-                      {/* <Button>See More Details</Button> */}
-                    </CardFooter>
-                  </div>
-                  <div className="flex items-center pr-[24px]">
-                    <Link
-                      href={`${process.env.NEXT_PUBLIC_URL}/events/${event._id}`}
-                      target="_blank"
-                    >
-                      <Image src={arrowImg} alt="Empty" className="w-[120px]" />
-                    </Link>
-                  </div>
-                </Card>
-              ))
+                        {/* <Button>See More Details</Button> */}
+                      </CardFooter>
+                    </div>
+                    <div className="flex items-center pr-[24px]">
+                      <Link
+                        href={`${process.env.NEXT_PUBLIC_URL}/events/${event._id}`}
+                        target="_blank"
+                      >
+                        <Image
+                          src={arrowImg}
+                          alt="Empty"
+                          className="w-[120px]"
+                        />
+                      </Link>
+                    </div>
+                  </Card>
+                )
+              )
             )}
           </TabsContent>
           {/* </Tabs> */}
@@ -323,53 +343,66 @@ const Events = () => {
                 </div>
               </div>
             ) : (
-              yourEvents.map((event: { _id: React.Key | null | undefined }) => (
-                <Card
-                  key={event._id}
-                  className="border-0 mt-16 h-[200px] flex"
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.51)",
-                  }}
-                >
-                  <div className="flex-1">
-                    <CardHeader>
-                      <CardTitle className="text-xl text-red-800">
-                        {event.name}
-                      </CardTitle>
-                      <CardDescription className="text-white">
-                        by {event.creator}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="">
-                      {event.location && (
-                        <div className="text-white">{event.location}</div>
-                      )}
-                      {event.link && (
+              yourEvents.map(
+                (event: {
+                  startDate(startDate: any): React.ReactNode;
+                  link: React.JSX.Element;
+                  location: React.JSX.Element;
+                  creator: ReactNode;
+                  name: ReactNode;
+                  _id: React.Key | null | undefined;
+                }) => (
+                  <Card
+                    key={event._id}
+                    className="border-0 mt-16 h-[200px] flex"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.51)",
+                    }}
+                  >
+                    <div className="flex-1">
+                      <CardHeader>
+                        <CardTitle className="text-xl text-red-800">
+                          {event.name}
+                        </CardTitle>
+                        <CardDescription className="text-white">
+                          by {event.creator}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="">
+                        {event.location && (
+                          <div className="text-white">{event.location}</div>
+                        )}
+                        {event.link && (
+                          <div className="text-white">
+                            <Link href={event.link as any}>
+                              {" "}
+                              Event Link: {event.link}
+                            </Link>
+                          </div>
+                        )}
+                      </CardContent>
+                      <CardFooter>
                         <div className="text-white">
-                          <Link href={event.link}>
-                            {" "}
-                            Event Link: {event.link}
-                          </Link>
+                          {formatDate(event.startDate)}
                         </div>
-                      )}
-                    </CardContent>
-                    <CardFooter>
-                      <div className="text-white">
-                        {formatDate(event.startDate)}
-                      </div>
-                      {/* <Button>See More Details</Button> */}
-                    </CardFooter>
-                  </div>
-                  <div className="flex items-center pr-[24px]">
-                    <Link
-                      href={`${process.env.NEXT_PUBLIC_URL}/events/${event._id}`}
-                      target="_blank"
-                    >
-                      <Image src={arrowImg} alt="Empty" className="w-[120px]" />
-                    </Link>
-                  </div>
-                </Card>
-              ))
+                        {/* <Button>See More Details</Button> */}
+                      </CardFooter>
+                    </div>
+                    <div className="flex items-center pr-[24px]">
+                      <Link
+                        href={`${process.env.NEXT_PUBLIC_URL}/events/${event._id}`}
+                        target="_blank"
+                      >
+                        <Image
+                          src={arrowImg}
+                          alt="Empty"
+                          className="w-[120px]"
+                        />
+                      </Link>
+                    </div>
+                  </Card>
+                )
+              )
             )}
           </TabsContent>
         </Tabs>

@@ -9,7 +9,7 @@ interface RequestBody {
   address: string;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: any) {
   try {
     await connectDB();
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { address }: RequestBody = await request.body.json();
+    const { address }: any = await request.body.json();
 
     if (!address) {
       return NextResponse.json(

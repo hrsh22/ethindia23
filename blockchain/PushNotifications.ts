@@ -1,4 +1,5 @@
 import { PushAPI } from "@pushprotocol/restapi";
+import { ENV } from "@pushprotocol/restapi/src/lib/constants";
 import { ethers } from "ethers";
 
 const _signer = new ethers.Wallet(
@@ -6,7 +7,7 @@ const _signer = new ethers.Wallet(
 );
 
 async function getNotifications(signer: any) {
-  const userAlice = await PushAPI.initialize(signer, { env: "staging" });
+  const userAlice = await PushAPI.initialize(signer, { env: "staging" as ENV });
   console.log("userAlice", userAlice);
   const inboxNotifications = await userAlice.notification.list("SPAM");
   console.log("inboxNotifications", inboxNotifications);
@@ -14,7 +15,7 @@ async function getNotifications(signer: any) {
 }
 
 async function Notify(address: any, title: any, body: any) {
-  const mainUser = await PushAPI.initialize(_signer, { env: "staging" });
+  const mainUser = await PushAPI.initialize(_signer, { env: "staging" as ENV });
   console.log("mainUser", mainUser);
 
   const response = await mainUser.channel.send([address], {

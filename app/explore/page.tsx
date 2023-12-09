@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -53,7 +53,7 @@ const Explore = () => {
     fetchData();
   }, []); // Empty dependency array means this effect will run once when the component mounts
 
-  function formatDate(isoDateString) {
+  function formatDate(isoDateString: any) {
     const isoDate = new Date(isoDateString);
 
     // Get the components of the date
@@ -67,54 +67,66 @@ const Explore = () => {
     return formattedDate;
   }
 
-  function padZero(number) {
+  function padZero(number: any) {
     return number < 10 ? "0" + number : number;
   }
   return (
     <div className="flex bg-black justify-center pt-20 min-h-[100vh] flex-col pl-48 pr-48">
-      {events.map((event: { _id: React.Key | null | undefined }) => (
-        <Card
-          key={event._id}
-          className="border-0 mt-16 h-[200px]"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.51)",
-            display: "flex", // Add this style to make it a flex container
-          }}
-        >
-          <div className="flex-1 flex-col">
-            <CardHeader>
-              <CardTitle className="text-xl text-red-800">
-                {event.name}
-              </CardTitle>
-              <CardDescription className="text-white">
-                by {event.creator}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="">
-              {event.location && (
-                <div className="text-white">Location: {event.location}</div>
-              )}
-              {event.link && (
-                <div className="text-white">
-                  <Link href={event.link}> Event Link: {event.link}</Link>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter>
-              <div className="text-white">{formatDate(event.startDate)}</div>
-              {/* <Button>See More Details</Button> */}
-            </CardFooter>
-          </div>
-          <div className="flex items-center pr-[24px]">
-            <Link
-              href={`${process.env.NEXT_PUBLIC_URL}/events/${event._id}`}
-              target="_blank"
-            >
-              <Image src={arrowImg} alt="Empty" className="w-[120px]" />
-            </Link>
-          </div>
-        </Card>
-      ))}
+      {events.map(
+        (event: {
+          name: ReactNode;
+          startDate(startDate: any): React.ReactNode;
+          link: React.JSX.Element;
+          location: React.JSX.Element;
+          creator: ReactNode;
+          _id: React.Key | null | undefined;
+        }) => (
+          <Card
+            key={event._id}
+            className="border-0 mt-16 h-[200px]"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.51)",
+              display: "flex", // Add this style to make it a flex container
+            }}
+          >
+            <div className="flex-1 flex-col">
+              <CardHeader>
+                <CardTitle className="text-xl text-red-800">
+                  {event.name}
+                </CardTitle>
+                <CardDescription className="text-white">
+                  by {event.creator}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="">
+                {event.location && (
+                  <div className="text-white">Location: {event.location}</div>
+                )}
+                {event.link && (
+                  <div className="text-white">
+                    <Link href={event.link as any}>
+                      {" "}
+                      Event Link: {event.link}
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter>
+                <div className="text-white">{formatDate(event.startDate)}</div>
+                {/* <Button>See More Details</Button> */}
+              </CardFooter>
+            </div>
+            <div className="flex items-center pr-[24px]">
+              <Link
+                href={`${process.env.NEXT_PUBLIC_URL}/events/${event._id}`}
+                target="_blank"
+              >
+                <Image src={arrowImg} alt="Empty" className="w-[120px]" />
+              </Link>
+            </div>
+          </Card>
+        )
+      )}
     </div>
   );
 };
