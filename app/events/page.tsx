@@ -64,13 +64,21 @@ const Events = () => {
 
         const upcomingEvents = data.response?.filter(
           (event: { startDate: string | number | Date }) =>
-            new Date(event.startDate) > currentDate
+            new Date(event.startDate) > currentDate &&
+            event.attendees?.some(
+              (attendee) =>
+                attendee.address === address && attendee.status === "approved"
+            )
         );
         console.log("upcomingEvents", upcomingEvents);
         setUpcomingEvents(upcomingEvents);
         const pastEvents = data.response?.filter(
           (event: { startDate: string | number | Date }) =>
-            new Date(event.startDate) <= currentDate
+            new Date(event.startDate) <= currentDate &&
+            event.attendees?.some(
+              (attendee) =>
+                attendee.address === address && attendee.status === "approved"
+            )
         );
         console.log("pastEvents", pastEvents);
         setPastEvents(pastEvents);

@@ -6,19 +6,15 @@ import { useAccount } from "wagmi";
 import { useParams } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { LogInWithAnonAadhaar, useAnonAadhaar } from "anon-aadhaar-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Notify } from "@/blockchain/PushNotifications";
 
-import Spinner from "./spinner";
+import { useContext } from "react";
+import { encodeFunctionData } from "viem";
+import { NFTAbi, NFTAddress } from "@/blockchain/data";
+import { SCWContext } from "@/context/SCWallet";
 
 export default function Page() {
   const router = useRouter();
@@ -33,7 +29,31 @@ export default function Page() {
   const [userStatus, setUserStatus] = useState("logged-out");
   const [initialPendingAttendees, setInitialPendingAttendees] = useState([]);
   const [pendingAttendees, setPendingAttendees] = useState([]);
+  const [isMinting, setIsMinting] = useState(false);
+  const [txHash, setTxHash] = useState("");
+  const { sCWSigner, sCWAddress } = useContext(SCWContext);
   console.log("anonAadhaar", anonAadhaar);
+
+  const handleMint = async () => {
+    if (!sCWSigner?.sendTransaction || !sCWAddress) return;
+    setIsMinting(true);
+    try {
+      const mintDeployTxnHash = await sCWSigner.sendTransaction({
+        from: sCWAddress,
+        to: NFTAddress,
+        data: encodeFunctionData({
+          abi: NFTAbi,
+          functionName: "safeMint",
+          args: [sCWAddress],
+        }),
+      });
+      setTxHash(mintDeployTxnHash);
+    } catch (e) {
+      console.error(e);
+    }
+
+    setIsMinting(false);
+  };
 
   useEffect(() => {
     anonAadhaar.status === "logged-in"
@@ -180,6 +200,7 @@ export default function Page() {
         `Congratulations! Your registration for the event ${event.name} has been approved. Get ready for an exciting experience! 🌟`
       );
       console.log("sent", sendNoti);
+      await handleMint();
     } catch (error) {
       console.error("Error updating attendee status:", error);
     }
@@ -284,11 +305,11 @@ export default function Page() {
               </>
             )}
           </div>
-          {isCreator && (
+          {isCreator && pendingAttendees && (
             <>
               <div className="bg-white bg-opacity-20 text-white p-8 mt-24 rounded-md w-full max-w-2xl mx-auto h-full">
                 <div className="flex text-xl text-white items-center ">
-                  Accept/Decline registrations
+                  Applicants
                 </div>
                 <div className="flex-1">
                   {pendingAttendees?.map((attendee, index) => (
