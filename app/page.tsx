@@ -5,6 +5,7 @@ import homeImg from "@/public/home.png";
 import { Elsie_Swash_Caps } from "next/font/google";
 import { Zilla_Slab } from "next/font/google";
 import { Button } from "@/components/ui/button";
+import { useAccount } from "wagmi";
 
 const elsie = Elsie_Swash_Caps({
   subsets: ["latin"],
@@ -25,6 +26,35 @@ const fadeOut = { opacity: 0 };
 
 export default function Home() {
   const [currentTitle, setCurrentTitle] = useState(0);
+
+  const { address, isConnecting, isDisconnected } = useAccount();
+
+  useEffect(() => {
+    const handleConnect = async () => {
+      if (!isConnecting && !isDisconnected && address) {
+        // The wallet is connected, and you have the wallet address
+        try {
+          const response = await fetch(`${NEXT_PUBLIC_URL}/user/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ address: address }),
+          });
+
+          if (response.ok) {
+            console.log("Wallet address saved successfully!");
+          } else {
+            console.error("Failed to save wallet address.");
+          }
+        } catch (error) {
+          console.error("Error saving wallet address:", error);
+        }
+      }
+    };
+
+    handleConnect();
+  }, [isConnecting, isDisconnected, address]);
 
   useEffect(() => {
     const interval = setInterval(() => {

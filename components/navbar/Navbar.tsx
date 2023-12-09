@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
+import Notifications from "./notifications";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
@@ -37,7 +38,8 @@ export default function Navbar() {
               />
               Create Event
             </Link>
-            <BellIcon className="w-6 h-6 text-yellow-400" />
+            {/* <BellIcon className="w-6 h-6 text-yellow-400" /> */}
+            <Notifications />
             <ConnectButton />
           </div>
         </div>

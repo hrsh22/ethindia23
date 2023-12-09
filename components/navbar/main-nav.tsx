@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTicket, faHouse } from "@fortawesome/free-solid-svg-icons";
 import { faRocketchat } from "@fortawesome/free-brands-svg-icons";
+import { faWpexplorer } from "@fortawesome/free-brands-svg-icons";
 
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 export function MainNav({
@@ -64,11 +65,11 @@ export function MainNav({
         Chats
       </Link>
       <Link
-        href="/create"
+        href="/explore"
         className="text-lg font-medium text-muted-foreground transition-colors hover:text-primary"
       >
         <FontAwesomeIcon
-          icon={faCalendarPlus}
+          icon={faWpexplorer}
           style={{
             color: "#000000",
             width: "1.5rem",
@@ -77,7 +78,7 @@ export function MainNav({
             paddingRight: "4px",
           }}
         />
-        Browse
+        Explore
       </Link>
     </nav>
   );

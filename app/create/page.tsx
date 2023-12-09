@@ -11,6 +11,7 @@ import {
   FontItalicIcon,
   UnderlineIcon,
 } from "@radix-ui/react-icons";
+import { Notify } from "@/blockchain/PushNotifications";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { set } from "mongoose";
@@ -74,6 +75,12 @@ export default function Create() {
           title: "Get Ready!",
           description: "Your event has been created!",
         });
+        const sendNoti = await Notify(
+          address,
+          `🎉 Event Created Successfully!`,
+          `Your event ${eventName} has been successfully created. Get ready for an amazing gathering! 🌟`
+        );
+        console.log("sent", sendNoti);
         setEventName("");
         setStartDate(new Date());
         setEndDate(new Date());

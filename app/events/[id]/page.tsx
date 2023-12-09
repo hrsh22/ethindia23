@@ -1,15 +1,27 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useParams } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { LogInWithAnonAadhaar, useAnonAadhaar } from "anon-aadhaar-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Notify } from "@/blockchain/PushNotifications";
 
 import Spinner from "./spinner";
 
 export default function Page() {
+  const router = useRouter();
   const { address, isConnecting, isDisconnected } = useAccount();
   const [event, setEvent] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +31,8 @@ export default function Page() {
   const { toast } = useToast();
   const [anonAadhaar] = useAnonAadhaar();
   const [userStatus, setUserStatus] = useState("logged-out");
+  const [initialPendingAttendees, setInitialPendingAttendees] = useState([]);
+  const [pendingAttendees, setPendingAttendees] = useState([]);
   console.log("anonAadhaar", anonAadhaar);
 
   useEffect(() => {
@@ -51,6 +65,11 @@ export default function Page() {
           setIsCreator(true);
         }
         setEvent(data.response[0]);
+        setPendingAttendees(
+          data.response[0].attendees?.filter(
+            (attendee) => attendee.status === "pending"
+          )
+        );
         setIsLoaded(true);
       } catch (error) {
         // Handle network or other errors
@@ -98,6 +117,13 @@ export default function Page() {
           title: "Get Ready!",
           description: "You have successfully registered!",
         });
+
+        const sendNoti = await Notify(
+          address,
+          `👍 Event Registration Submitted!`,
+          `Your registration for the event ${event.name} has been submitted. Sit tight, and we'll keep you posted. 🤞`
+        );
+        console.log("sent", sendNoti);
       } else {
         const errorData = await response.json();
         console.error(errorData); // Log the error data
@@ -113,6 +139,79 @@ export default function Page() {
     } finally {
       const value = `{"status":"logged-out"}`;
       localStorage.setItem("anonAadhaar", value);
+    }
+  };
+
+  console.log("Event Attendees", event?.attendees);
+
+  // const initialPendingAttendees =
+  //   event?.attendees?.filter((attendee) => attendee.status === "pending") || [];
+
+  // console.log("initialPendingAttendees", initialPendingAttendees);
+
+  // const [pendingAttendees, setPendingAttendees] = useState(
+  //   initialPendingAttendees
+  //   // event?.attendees?.filter((attendee) => attendee.status === "pending") || []
+  // );
+  // console.log("pendingAttendees", pendingAttendees);
+
+  const handleAccept = async (eventId, address) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/events/status?eventId=${eventId}&address=${address}&newStatus=approved`,
+        {
+          method: "PUT",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data); // Handle the response data accordingly
+      const updatedAttendees = pendingAttendees.filter(
+        (attendee) => attendee.address !== address
+      );
+      setPendingAttendees(updatedAttendees);
+      const sendNoti = await Notify(
+        address,
+        `🎉 Registration Approved!`,
+        `Congratulations! Your registration for the event ${event.name} has been approved. Get ready for an exciting experience! 🌟`
+      );
+      console.log("sent", sendNoti);
+    } catch (error) {
+      console.error("Error updating attendee status:", error);
+    }
+  };
+
+  const handleReject = async (eventId, address) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/events/status?eventId=${eventId}&address=${address}&newStatus=not_approved`,
+        {
+          method: "PUT",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data); // Handle the response data accordingly
+      const updatedAttendees = pendingAttendees.filter(
+        (attendee) => attendee.address !== address
+      );
+      setPendingAttendees(updatedAttendees);
+      const sendNoti = await Notify(
+        address,
+        `😞 Registration Not Approved`,
+        `Unfortunately, your registration for the event ${event.name} has not been approved. Don't worry, there are plenty of other opportunities. Keep exploring! 🌐`
+      );
+      console.log("sent", sendNoti);
+    } catch (error) {
+      console.error("Error updating attendee status:", error);
     }
   };
 
@@ -190,6 +289,40 @@ export default function Page() {
               <div className="bg-white bg-opacity-20 text-white p-8 mt-24 rounded-md w-full max-w-2xl mx-auto h-full">
                 <div className="flex text-xl text-white items-center ">
                   Accept/Decline registrations
+                </div>
+                <div className="flex-1">
+                  {pendingAttendees?.map((attendee, index) => (
+                    <Card
+                      key={index}
+                      className="mt-16 h-full flex "
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.51)",
+                      }}
+                    >
+                      <div className="flex justify-between items-center p-4 w-full">
+                        <div className="flex-1">
+                          <h2 className="text-lg font-bold">Address</h2>
+                          {attendee.address}
+                        </div>
+                        <div className="flex-shrink-0 flex items-center space-x-2">
+                          <Button
+                            onClick={() =>
+                              handleAccept(event._id, attendee.address)
+                            }
+                          >
+                            <FontAwesomeIcon icon={faCheck} />
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              handleReject(event._id, attendee.address)
+                            }
+                          >
+                            <FontAwesomeIcon icon={faXmark} />
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               </div>
             </>

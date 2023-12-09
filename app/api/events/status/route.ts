@@ -31,15 +31,15 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Find the user by address
-    const user: UserDocument | null = await User.findOne({ address });
+    // // Find the user by address
+    // const user: UserDocument | null = await User.findOne({ address });
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "User not found." },
-        { status: 404 }
-      );
-    }
+    // if (!user) {
+    //   return NextResponse.json(
+    //     { success: false, message: "User not found." },
+    //     { status: 404 }
+    //   );
+    // }
 
     // Update the status in the event's attendees array
     const attendeeIndex = event.attendees.findIndex(
@@ -59,25 +59,25 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update the status in the user's events array
-    const eventIndex = user.events.findIndex(
-      (userEvent) => userEvent.eventId.toString() === eventId
-    );
+    // const eventIndex = user.events.findIndex(
+    //   (userEvent) => userEvent.eventId.toString() === eventId
+    // );
 
-    if (eventIndex !== -1) {
-      user.events[eventIndex].status = newStatus as
-        | "approved"
-        | "not_approved"
-        | "pending";
-    } else {
-      return NextResponse.json(
-        { success: false, message: "Event not found in the user's events." },
-        { status: 404 }
-      );
-    }
+    // if (eventIndex !== -1) {
+    //   user.events[eventIndex].status = newStatus as
+    //     | "approved"
+    //     | "not_approved"
+    //     | "pending";
+    // } else {
+    //   return NextResponse.json(
+    //     { success: false, message: "Event not found in the user's events." },
+    //     { status: 404 }
+    //   );
+    // }
 
     // Save the changes to both the event and user
     await event.save();
-    await user.save();
+    // await user.save();
 
     return NextResponse.json(
       { success: true, message: "Attendee status updated successfully." },
