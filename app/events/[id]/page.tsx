@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useParams } from "next/navigation";
-import { set } from "mongoose";
 import { useToast } from "@/components/ui/use-toast";
+import { LogInWithAnonAadhaar, useAnonAadhaar } from "anon-aadhaar-react";
+
+import Spinner from "./spinner";
 
 export default function Page() {
   const { address, isConnecting, isDisconnected } = useAccount();
@@ -15,6 +17,15 @@ export default function Page() {
   const params = useParams();
   console.log("params", params);
   const { toast } = useToast();
+  const [anonAadhaar] = useAnonAadhaar();
+  const [userStatus, setUserStatus] = useState("logged-out");
+  console.log("anonAadhaar", anonAadhaar);
+
+  useEffect(() => {
+    anonAadhaar.status === "logged-in"
+      ? setUserStatus("logged-in")
+      : setUserStatus("logged-out");
+  }, [anonAadhaar, setUserStatus]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -99,6 +110,9 @@ export default function Page() {
     } catch (error) {
       console.error(error);
       // Handle any other errors that might occur during the API call.
+    } finally {
+      const value = `{"status":"logged-out"}`;
+      localStorage.setItem("anonAadhaar", value);
     }
   };
 
@@ -145,16 +159,35 @@ export default function Page() {
               {event.requireApproval ? "Yes" : "No"}
             </div>
             {!isCreator && (
-              <div className="mb-4 flex items-center justify-center">
-                <Button className="w-24 bg-[#BC4749]" onClick={handleRegister}>
-                  Register
-                </Button>
-              </div>
+              <>
+                <div className="flex flex-col items-center justify-center">
+                  <div className="">
+                    {anonAadhaar.status === "logged-in" ? (
+                      <Button
+                        className="w-24 bg-[#BC4749]"
+                        onClick={handleRegister}
+                      >
+                        Register
+                      </Button>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <div className="mb-2 italic">
+                          Login with Anon Aadhar to continue registering
+                        </div>
+                        <LogInWithAnonAadhaar />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* <div className="mb-4 flex items-center justify-center">
+                  
+                </div> */}
+              </>
             )}
           </div>
           {isCreator && (
             <>
-              <div className="bg-white bg-opacity-20 text-white p-8 mt-24 mt-12 rounded-md w-full max-w-2xl mx-auto h-full">
+              <div className="bg-white bg-opacity-20 text-white p-8 mt-24 rounded-md w-full max-w-2xl mx-auto h-full">
                 <div className="flex text-xl text-white items-center ">
                   Accept/Decline registrations
                 </div>

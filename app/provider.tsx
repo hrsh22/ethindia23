@@ -11,6 +11,7 @@ import { baseGoerli } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { SCWalletContext } from "@/context/SCWallet";
+import { AnonAadhaarProvider } from "anon-aadhaar-react";
 
 const { chains, publicClient } = configureChains(
   [baseGoerli],
@@ -33,11 +34,15 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
+const appid = process.env.NEXT_PUBLIC_APP_ID;
+
 export default function Provider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
-        <SCWalletContext>{children}</SCWalletContext>
+        <SCWalletContext>
+          <AnonAadhaarProvider _appId={appid}>{children}</AnonAadhaarProvider>
+        </SCWalletContext>
       </RainbowKitProvider>
     </WagmiConfig>
   );
