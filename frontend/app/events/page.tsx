@@ -130,7 +130,7 @@ const Events = () => {
             <TabsTrigger value="yours">Yours</TabsTrigger>
           </TabsList>
           <TabsContent value="upcoming">
-            {!upcomingEvents ? (
+            {upcomingEvents?.length == 0 ? (
               <div className="flex flex-col  justify-center items-center h-[80vh]">
                 {/* <Image src={emptyImg} alt="Empty" className="w-[300px]" /> */}
                 <div
@@ -223,7 +223,7 @@ const Events = () => {
             )}
           </TabsContent>
           <TabsContent value="past">
-            {!pastEvents ? (
+            {pastEvents?.length == 0 ? (
               <div className="flex flex-col  justify-center items-center h-[80vh]">
                 {/* <Image src={emptyImg} alt="Empty" className="w-[300px]" /> */}
                 <div
@@ -315,7 +315,7 @@ const Events = () => {
           </TabsContent>
           {/* </Tabs> */}
           <TabsContent value="yours">
-            {!yourEvents ? (
+            {yourEvents?.length == 0 ? (
               <div className="flex flex-col  justify-center items-center h-[80vh]">
                 {/* <Image src={emptyImg} alt="Empty" className="w-[300px]" /> */}
                 <div
@@ -354,7 +354,7 @@ const Events = () => {
                 }) => (
                   <Card
                     key={event._id}
-                    className="border-0 mt-16 h-[200px] flex"
+                    className="border-0 mt-16 h-full flex"
                     style={{
                       backgroundColor: "rgba(255, 255, 255, 0.51)",
                     }}

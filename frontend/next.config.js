@@ -1,7 +1,7 @@
 // in next.config.js
 /** @type {import('next').NextConfig} */
 
-const { CHATS_URL } = process.env;
+const { NEXT_PUBLIC_CHATS_URL } = process.env;
 
 const nextConfig = {
   reactStrictMode: true,
@@ -18,11 +18,11 @@ const nextConfig = {
       },
       {
         source: "/chats",
-        destination: `${CHATS_URL}/chats`,
+        destination: `${NEXT_PUBLIC_CHATS_URL}/chats`,
       },
       {
         source: "/docs/:path*",
-        destination: `${CHATS_URL}/chats/:path*`,
+        destination: `${NEXT_PUBLIC_CHATS_URL}/chats/:path*`,
       },
     ];
   },
