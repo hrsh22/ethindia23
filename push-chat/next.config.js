@@ -12,6 +12,7 @@ const nextConfig = {
     });
     return config;
   },
+  basePath: "/chats",
 };
 
 module.exports = nextConfig;
