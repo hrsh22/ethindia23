@@ -13,7 +13,7 @@ import { useWalletClient } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 function Push() {
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<any>([]);
   const [signer, setSigner] = useState<ethers.Signer | undefined>(); // Corrected type
   const [selectedChat, setSelectedChat] = useState<string | null>(null); // Corrected type
   const [alice, setAlice] = useState<PushAPI | null>(null); // Corrected type
@@ -84,7 +84,11 @@ function Push() {
   console.log("SELECTED CHATS: ", selectedChat);
 
   return (
-    <ChatUIProvider theme={darkChatTheme} env={ENV.STAGING} signer={_signer}>
+    <ChatUIProvider
+      theme={darkChatTheme}
+      env={ENV.STAGING}
+      signer={_signer || undefined}
+    >
       {!_signer ? (
         <div className="flex justify-center items-center h-[100vh]">
           <ConnectButton />
@@ -101,8 +105,8 @@ function Push() {
                 <div className="flex flex-col space-y-2">
                   {chats &&
                     chats
-                      ?.filter((x) => x.groupInformation)
-                      .map((x) => (
+                      ?.filter((x: any) => x.groupInformation)
+                      .map((x: any) => (
                         <div
                           key={x.chatId}
                           onClick={() => setSelectedChat(x?.chatId)}
@@ -128,7 +132,7 @@ function Push() {
 
             <div className="lg:col-span-4 h-[90vh]">
               <ChatView
-                chatId={selectedChat}
+                chatId={selectedChat || ""}
                 limit={10}
                 verificationFailModalPosition={MODAL_POSITION_TYPE.RELATIVE}
                 isConnected={true}
